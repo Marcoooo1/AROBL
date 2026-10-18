@@ -1,0 +1,3 @@
+wsl ~
+cd ~/projects/nerf-object-reconstruction
+conda activate nerf-recon

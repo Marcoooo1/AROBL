@@ -1,0 +1,26 @@
+# Daten und Trainingsergebnisse gehoeren nicht ins Repository
+data/raw/**
+data/masked/**
+data/colmap/**
+outputs/**
+results/**
+
+# Ausnahme: Ground Truth STL und Ordnerplatzhalter
+!data/reference/**
+!**/.gitkeep
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+checkpoints/
+*.pt
+*.pth
+.DS_Store
+
+# Große Daten und Ergebnisse
+data/
+outputs/
+results/
+env/
+.vscode/

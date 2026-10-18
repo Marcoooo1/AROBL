@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nerfpipe"
+version = "0.1.0"
+description = "NeRF based object reconstruction to STL with geometric evaluation"
+requires-python = ">=3.10"
+authors = [
+    { name = "Marco Bayreder" },
+    { name = "Lorenz Christian" },
+]
+# torch wird bewusst nicht hier gepinnt, es muss ueber den cu128 Index kommen
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
