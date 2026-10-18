@@ -198,7 +198,17 @@ def run_one(exp_dir: Path, ver: dict) -> dict:
             run_cmd(["ns-export", "poisson", "--load-config", str(cfg),
                      "--output-dir", str(mesh_out),
                      "--texture-method", "point_cloud",
-                     "--num-points", "1000000"], log)
+                     "--num-points", "1000000",
+                     # Begrenzung auf die Einheitskugel, in der das Objekt per
+                     # DTU Normierung sitzt. Ohne das legt Poisson eine Flaeche
+                     # ueber die ferne Hintergrundpunktwolke, gemessen bis
+                     # Radius 828 statt 1. Der Poisson Exporter erbt
+                     # --use-bounding-box nur und beachtet es nicht, wirksam
+                     # sind die OBB Parameter. obb-scale ist die volle
+                     # Kantenlaenge, 2 2 2 ergibt -1 bis 1.
+                     "--obb-center", "0", "0", "0",
+                     "--obb-rotation", "0", "0", "0",
+                     "--obb-scale", "2", "2", "2"], log)
             ply = mesh_out / "poisson_mesh.ply"
             if not ply.exists():
                 raise FileNotFoundError("poisson_mesh.ply not produced")
@@ -220,6 +230,10 @@ def run_one(exp_dir: Path, ver: dict) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--scenes", nargs="+", default=None)
+    ap.add_argument("--exp", default=None,
+                    help="nur diesen einen Lauf, z.B. scan24_n05_s0")
+    ap.add_argument("--limit", type=int, default=None,
+                    help="hoechstens so viele Laeufe, fuer einen Rauchtest")
     ap.add_argument("--retry-failed", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -230,8 +244,15 @@ def main() -> int:
     if args.scenes:
         exps = [d for d in exps if parse_exp(d.name)[0] in args.scenes]
 
+    if args.exp:
+        exps = [d for d in exps if d.name == args.exp]
+        if not exps:
+            sys.exit(f"kein Experimentverzeichnis mit dem Namen {args.exp}")
+
     done = done_set(args.retry_failed)
     todo = [d for d in exps if d.name not in done]
+    if args.limit is not None:
+        todo = todo[:args.limit]
 
     print(f"{len(exps)} experiments, {len(done)} already done, {len(todo)} to run")
     if args.dry_run:

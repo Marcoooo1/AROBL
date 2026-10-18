@@ -1,0 +1,3 @@
+exp,scene,n,seed,status,psnr,ssim,lpips,n_faces,n_vertices,watertight,n_components,n_nonmanifold,chamfer,f_score,psnr_fg,ssim_fg,lpips_fg,train_s,total_s,git,nerfstudio,torch,steps,timestamp
+scan24_n05_s0,scan24,5,0,ok,11.4997,0.1911,0.8162,,,,,,,,,,,591,710,?,?,2.11.0+cu128,12000,2026-10-17T13:44:40+00:00
+scan24_n05_s1,scan24,5,1,ok,11.4905,0.2394,0.8056,,,,,,,,,,,599,713,?,?,2.11.0+cu128,12000,2026-10-17T13:56:34+00:00

@@ -25,3 +25,15 @@ results/
 .venv/
 venv/
 .vscode/
+
+# Datensaetze gehoeren nicht ins Repository
+data/dtu/**
+
+# Sicherungskopien der Patch-Skripte
+*.bak
+*.bak2
+
+# Ausnahme: die beiden Ergebnistabellen sind klein und gehoeren geteilt
+!results/
+!results/*.csv
+*:Zone.Identifier
