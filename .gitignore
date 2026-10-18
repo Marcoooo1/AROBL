@@ -22,5 +22,6 @@ checkpoints/
 data/
 outputs/
 results/
-env/
+.venv/
+venv/
 .vscode/
