@@ -157,23 +157,24 @@ tinycudann and continue, everything works without it and only slower.
 
 ### 3.5 Patches
 
-Four patches. They modify the installed Nerfstudio package and this
-repository's runner, so each person applies them on their own machine. The two
-Nerfstudio ones must be re-applied after any `pip install --upgrade nerfstudio`.
-All four are idempotent and keep a backup copy.
+Two patches. They modify the installed Nerfstudio package, not this
+repository, so each person applies them on their own machine and re-applies
+them after any `pip install --upgrade nerfstudio`. Both are idempotent and
+keep a backup copy.
 
 ```bash
 python env/patch_torch_load.py      # lets ns-eval and ns-export load checkpoints
 python env/patch_printing.py        # stops training crashing on a stats log glitch
-python env/patch_export.py          # limits the Poisson export to the unit sphere
-python env/patch_limit.py           # adds --exp and --limit to the runner
 ```
 
 `patch_torch_load` adds `weights_only=False` to Nerfstudio's `torch.load`
 calls. That is safe only because the checkpoints are produced on your own
 machine. Never apply it to checkpoints from an untrusted source.
 `patch_printing` guards a logarithm in the stats printer against a
-non-positive timing value. `patch_export` is explained in section 6.
+non-positive timing value.
+
+Nothing else needs patching. The export flags described in section 6 live in
+`scripts/run_experiments.py` and come with the repository.
 
 ### 3.6 Verify
 
@@ -329,8 +330,8 @@ inherits `--use-bounding-box` and `--bounding-box-min/-max` and does not act on
 them, the oriented box options are the ones that work. With
 `--obb-center 0 0 0 --obb-rotation 0 0 0 --obb-scale 2 2 2`, which is the range
 -1 to 1, 88.6 percent of the vertices land inside the unit sphere and the mesh
-drops to 162547 vertices. `env/patch_export.py` writes these flags into the
-runner. The export becomes slower, about 5 minutes instead of 30 seconds,
+drops to 162547 vertices. `scripts/run_experiments.py` carries these flags, so
+there is nothing to apply. The export becomes slower, about 5 minutes instead of 30 seconds,
 because rays that miss the box produce no points.
 
 ---
@@ -422,8 +423,6 @@ scripts/
 env/
   patch_torch_load.py   Nerfstudio checkpoint-load patch
   patch_printing.py     Nerfstudio stats-log patch
-  patch_export.py       limit the Poisson export to the unit sphere
-  patch_limit.py        add --exp and --limit to the runner
 src/nerfpipe/metrics/
   dtu_eval.py           DTU protocol: accuracy, completeness, chamfer, F-score
   geometry.py           ICP plus Chamfer against a reference mesh (Part B)
@@ -465,7 +464,7 @@ committed before the run.
 | training dies with `math domain error` | stats log glitch on WSL | `python env/patch_printing.py` |
 | `nvidia-smi` empty or GPU access blocked | driver updated, needs restart | `wsl --shutdown`, then restart Windows if needed |
 | training process `Killed` | WSL ran out of RAM | close other runs, mesh stats are memory-capped by design |
-| mesh is huge, no vertices inside the unit sphere | Poisson export not limited | `python env/patch_export.py`, section 6 |
+| mesh is huge, no vertices inside the unit sphere | Poisson export not limited | update `scripts/run_experiments.py` from the repository, section 6 |
 | mesh statistics columns stay empty | mesh too large, capped helper gave up | usually the same cause as the row above |
 | `eval_geometry.py` reports `no_gt` | DTU reference missing | section 4.4 |
 | geometry columns missing in `analyze.py` | old version, column name collision | pull the current `scripts/analyze.py` |
