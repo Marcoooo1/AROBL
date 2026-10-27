@@ -160,6 +160,14 @@ def run_one(exp_dir: Path, ver: dict) -> dict:
                 "ns-train", "nerfacto",
                 "--max-num-iterations", str(STEPS),
                 "--vis", "tensorboard",
+                # Weniger Zwischenauswertungen
+                "--steps-per-eval-image", "3000",
+                "--steps-per-eval-batch", "3000",
+                # Weniger Checkpoints
+                "--steps-per-save", "6000",
+                 # Trainingsbilder auf GPU
+                "--pipeline.datamanager.images-on-gpu", "True",
+                
                 "--output-dir", str(OUT_ROOT),
                 "--experiment-name", exp,
                 "--pipeline.model.predict-normals", "True",
